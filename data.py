@@ -1,7 +1,6 @@
 import csv
 import numpy as np
 import pandas as pd
-from pprint import pprint as pp
 
 
 def pivot_immunization():
@@ -84,7 +83,7 @@ def load_countries():
 def main():
 
     immunization = pivot_immunization()
-    resistance = load('data/drug_resistence.csv')
+    resistance = load('data/drug_resistance.csv')
     df = immunization.merge(resistance, how='outer', on=['Country', 'Year'])
 
     incidence = load('data/incidence.csv')
