@@ -50,8 +50,15 @@ def load(filename):
                             value = value.split('[')[0].replace(' ', '')
 
                         value = np.float(value)
-                        if '(per 100 000 population)' in col:
-                            value *= 100000
+                        if '(%)' in col:
+                            value /= 100
+
+                        # maybe convert these values?  need to adjust column labels
+
+                        # if '(per 100 000 population)' in col:
+                        #     value *= 100000
+                        # if '(in thousands)' in col:
+                        #     value *= 1000
 
                     except ValueError:
                         value = np.nan
@@ -62,6 +69,16 @@ def load(filename):
             data.append(row)
 
         return pd.DataFrame(data)
+
+
+def load_countries():
+    with open('data/countries.csv') as f:
+        reader = csv.DictReader(f)
+        data = list()
+        for row in reader:
+            data.append(row)
+
+    return pd.DataFrame(data)
 
 
 def main():
@@ -90,6 +107,12 @@ def main():
 
     treatment_coverage = load('data/treatment_coverage.csv')
     df = df.merge(treatment_coverage, how='outer', on=['Country', 'Year'])
+
+    countries = load_countries()
+    df = df.merge(countries, how='outer', left_on='Country', right_on='DisplayString')
+
+    population = load('data/population.csv')
+    df = df.merge(population, how='outer', on=['Country', 'Year'])
 
     df.to_csv('data/merge_out.csv')
 
